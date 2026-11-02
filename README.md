@@ -3,7 +3,7 @@
 See how much of your Claude Code and Codex subscription is left — the 5-hour and weekly limits — in the Mac menu bar and on iPhone widgets.
 
 - **Mac**: a menu bar meter (four styles) and a popover with reset times and whether you are ahead of an even weekly pace
-- **iPhone** (optional): an app and Home Screen / Lock Screen widgets that show what your Mac fetched, synced through your own iCloud
+- **iPhone** (optional, not on the App Store yet): an app and Home Screen / Lock Screen widgets that show what your Mac fetched, synced through your own iCloud
 
 <p>
   <picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/popover-dark.png"><img src="docs/images/popover-light.png" width="340" alt="The Mac popover with Claude Code and Codex usage"></picture>
@@ -33,7 +33,7 @@ Nokori AI is not affiliated with, endorsed by, or sponsored by Anthropic or Open
 
    Or download the latest `Nokori AI` from [Releases](../../releases), move it to Applications and open it. It lives in the menu bar; there is no Dock icon.
 2. The first time it reads your Claude Code sign-in, macOS asks whether Nokori AI may use the "Claude Code-credentials" keychain item. See [the keychain prompt](#the-keychain-prompt).
-3. For the iPhone, sign in to the same Apple Account on both devices and keep "Sync to iPhone" on in the Mac app's settings.
+3. For the iPhone, once its app is out, sign in to the same Apple Account on both devices and keep "Sync to iPhone" on in the Mac app's settings.
 
 The app checks for updates once a day and offers them; turn that off or check now under **Updates** in its settings. Neither service promises the way usage is read here, so updates are how fixes reach you.
 
