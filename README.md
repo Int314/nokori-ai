@@ -73,6 +73,10 @@ A fork needs its own identifiers, because iCloud containers and App Groups belon
 
 Then register the iCloud container and App Group in your Apple Developer account.
 
+## Privacy
+
+Nothing is sent to the developer. See the [privacy policy](docs/privacy.md).
+
 ## License
 
 [MIT](LICENSE)
