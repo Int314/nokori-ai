@@ -15,7 +15,8 @@ import WidgetKit
     private init() {
         content = store.load()
         #if DEBUG
-        if CommandLine.arguments.contains("--sample") { content = Self.sample }
+        // Also handed to the widgets, so a recording can show them with the same numbers.
+        if CommandLine.arguments.contains("--sample") { content = Self.sample; try? store.save(Self.sample); WidgetCenter.shared.reloadAllTimelines() }
         if CommandLine.arguments.contains("--sample-failure") { failure = .offline }
         #endif
     }
