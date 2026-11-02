@@ -392,6 +392,23 @@
         }
       }
     },
+    "Fetched %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fetched %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 取得"
+          }
+        }
+      }
+    },
     "Updated %lld min ago": {
       "extractionState": "manual",
       "localizations": {

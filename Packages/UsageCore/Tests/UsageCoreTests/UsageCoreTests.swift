@@ -177,6 +177,9 @@ func malformedClaude(_ json: String) {
     #expect(formatter.pace(-4) == "4% under even pace")
     #expect(formatter.updated(now, now: now) == "Updated just now")
     #expect(formatter.updated(now, now: now.addingTimeInterval(60)) == "Updated 1 min ago")
+    #expect(formatter.fetched(now, now: now.addingTimeInterval(3600)) == "Fetched \(formatter.time(now))")
+    #expect(formatter.fetched(now, now: now.addingTimeInterval(2 * 86400)).hasPrefix("Fetched "))
+    #expect(formatter.fetched(now, now: now.addingTimeInterval(2 * 86400)) != "Fetched \(formatter.time(now))")
     #expect(formatter.accessibility(snapshot(), now: now) == "Claude Code 5-hour –, weekly 50%")
 }
 @Test(arguments: [FetchStatus.notLoggedIn, .expired, .needsKeychainPermission, .keychainChanged, .failed(.network), .failed(.timeout), .failed(.rateLimited), .failed(.codexNotFound), .failed(.launchFailed), .failed(.unexpected)])
@@ -195,6 +198,7 @@ func failureMessages(_ status: FetchStatus) {
     #expect(formatter.pace(14) == "均等ペースより14%多め")
     #expect(formatter.pace(-4) == "均等ペースより4%余裕")
     #expect(formatter.updated(now, now: now) == "たった今更新")
+    #expect(formatter.fetched(now, now: now.addingTimeInterval(60)) == "\(formatter.time(now)) 取得")
     #expect(formatter.failure(.notLoggedIn, provider: .codex).detail == "ターミナルでCodexにログインしてください")
     #expect(formatter.failure(.needsKeychainPermission, provider: .claude).detail == "Claude Codeのログイン情報を読むには許可が要ります")
     #expect(formatter.failure(.keychainChanged, provider: .claude).detail == "Claude Codeの更新で許可が外れました")

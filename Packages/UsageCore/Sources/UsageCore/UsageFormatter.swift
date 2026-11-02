@@ -27,6 +27,15 @@ public struct UsageFormatter: Sendable {
         style.timeZone = timeZone
         return date.formatted(style)
     }
+    /// When the Mac last fetched a service: "Fetched 4:23 PM" today, with the date from an earlier day.
+    public func fetched(_ date: Date, now: Date) -> String {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        var style = Date.FormatStyle().month(.abbreviated).day().hour().minute().locale(locale)
+        style.timeZone = timeZone
+        let when = calendar.isDate(date, inSameDayAs: now) ? time(date) : date.formatted(style)
+        return text("Fetched \(when)")
+    }
     /// A weekly reset is always within the coming week, so the weekday is enough to place it.
     private func weekdayTime(_ date: Date) -> String {
         var style = Date.FormatStyle().weekday(.abbreviated).hour().minute().locale(locale)

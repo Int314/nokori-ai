@@ -82,6 +82,10 @@ public struct ServiceSection: View {
                 Circle().fill(theme.provider(snapshot.provider)).frame(width: 8, height: 8)
                 Text(verbatim: snapshot.provider.name).font(.system(size: metrics.name, weight: .semibold))
                 Spacer()
+                // The Mac fetches each service on its own schedule, so on the iPhone each card says how old its numbers are.
+                if layout == .phone && snapshot.fetchedAt != .distantPast {
+                    Text(verbatim: formatter.fetched(snapshot.fetchedAt, now: now)).font(.system(size: metrics.note)).foregroundStyle(theme.sub)
+                }
                 if let plan = snapshot.plan { Text(verbatim: plan).font(.system(size: metrics.chip)).foregroundStyle(theme.sub).padding(.horizontal, 6).padding(.vertical, 2).background(theme.chip, in: RoundedRectangle(cornerRadius: 4)) }
             }
             VStack(spacing: available ? metrics.section : 8) {
