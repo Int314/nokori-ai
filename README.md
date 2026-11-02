@@ -3,7 +3,7 @@
 See how much of your Claude Code and Codex subscription is left — the 5-hour and weekly limits — in the Mac menu bar and on iPhone widgets.
 
 - **Mac**: a menu bar meter (four styles) and a popover with reset times and whether you are ahead of an even weekly pace
-- **iPhone** (optional, not on the App Store yet): an app and Home Screen / Lock Screen widgets that show what your Mac fetched, synced through your own iCloud
+- **iPhone** (optional, [build it yourself](#iphone-app)): an app and Home Screen / Lock Screen widgets that show what your Mac fetched, synced through your own iCloud
 
 <p>
   <picture><source media="(prefers-color-scheme: dark)" srcset="docs/images/popover-dark.png"><img src="docs/images/popover-light.png" width="340" alt="The Mac popover with Claude Code and Codex usage"></picture>
@@ -20,7 +20,7 @@ Nokori AI is not affiliated with, endorsed by, or sponsored by Anthropic or Open
 
 ## Requirements
 
-- macOS 14 or later; iPhone with iOS 17 or later for the widgets
+- macOS 14 or later; for the iPhone app, iOS 17 or later and a paid Apple Developer Program membership
 - Claude Code signed in with a Claude Pro or Max plan, and/or the Codex CLI signed in with a ChatGPT plan. API-key sign-ins have no subscription limits to show
 
 ## Install
@@ -36,7 +36,6 @@ Nokori AI is not affiliated with, endorsed by, or sponsored by Anthropic or Open
 
    Or download the latest `Nokori AI` from [Releases](../../releases), move it to Applications and open it. It lives in the menu bar; there is no Dock icon.
 2. The first time it reads your Claude Code sign-in, macOS asks whether Nokori AI may use the "Claude Code-credentials" keychain item. See [the keychain prompt](#the-keychain-prompt).
-3. For the iPhone, once its app is out, sign in to the same Apple Account on both devices and keep "Sync to iPhone" on in the Mac app's settings.
 
 The app checks for updates once a day and offers them; turn that off or check now under **Updates** in its settings. Neither service promises the way usage is read here, so updates are how fixes reach you.
 
@@ -55,23 +54,28 @@ Claude Code keeps its sign-in in the macOS keychain, and macOS asks before anoth
 
 Claude Code writes that item with Apple's `/usr/bin/security` tool, so Nokori AI reads it through the same tool when the item's access list already trusts it. In that case no prompt appears even after Claude Code renews its sign-in. Otherwise you may be asked again after a renewal.
 
-## Building from source
+## iPhone app
 
-Requires a current Xcode and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+The iPhone app is not distributed; developers who want it build it themselves. iCloud sync and the App Group the widgets read from need a paid [Apple Developer Program](https://developer.apple.com/programs/) membership, and an iCloud container belongs to one developer team. So the Mac app from Homebrew or Releases cannot reach your iPhone: build both the Mac app and the iPhone app with your own team.
 
-```bash
-xcodegen generate
-open NokoriAI.xcodeproj
-```
+1. Install a current Xcode and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
+2. Replace this project's identifiers with yours:
+   - `DEVELOPMENT_TEAM` and the `PRODUCT_BUNDLE_IDENTIFIER`s in `project.yml`. For the Mac target, also set `CODE_SIGN_STYLE` to `Automatic` and remove `CODE_SIGN_IDENTITY` and `PROVISIONING_PROFILE_SPECIFIER`
+   - the iCloud container `iCloud.dev.int314.nokori` in the three `.entitlements` files and `Packages/UsageCore/Sources/UsageCore/CloudSync.swift`
+   - the App Group `group.dev.int314.nokori` in the iPhone and widget `.entitlements` files and `Packages/UsageCore/Sources/UsageCore/SharedStore.swift`
+3. Generate and open the project:
 
-A fork needs its own identifiers, because iCloud containers and App Groups belong to one developer team. Replace these with yours:
+   ```bash
+   xcodegen generate
+   open NokoriAI.xcodeproj
+   ```
 
-- `DEVELOPMENT_TEAM` and the `PRODUCT_BUNDLE_IDENTIFIER`s in `project.yml`, and the Mac target's provisioning profile name
-- the iCloud container `iCloud.dev.int314.nokori` in the three `.entitlements` files and `Packages/UsageCore/Sources/UsageCore/CloudSync.swift`
-- the App Group `group.dev.int314.nokori` in the iPhone and widget `.entitlements` files and `Packages/UsageCore/Sources/UsageCore/SharedStore.swift`
-- the update feed and key: `SUFeedURL` and `SUPublicEDKey` in `project.yml` (make your own key with Sparkle's `generate_keys`), and `repo=` in `scripts/release-mac.sh`. Otherwise your builds would offer this project's releases as updates
+4. In Signing & Capabilities, let Xcode register the identifiers, the iCloud container and the App Group in your account.
+5. Quit the Homebrew or Releases copy of Nokori AI if it is running, then run `NokoriMac` on your Mac and `NokoriiOS` on your iPhone, signed in to the same Apple Account.
 
-Then register the iCloud container and App Group in your Apple Developer account.
+Builds run from Xcode never update themselves and use iCloud's development environment, which creates its record types on first use. Pull and run them again for new versions. The iPhone app keeps working until its development profile expires, a year at most.
+
+Archiving your own release instead also needs your own update feed and key: `SUFeedURL` and `SUPublicEDKey` in `project.yml` (make the key with Sparkle's `generate_keys`) and `repo=` in `scripts/release-mac.sh`. Otherwise your build would offer this project's releases as updates. Release builds use iCloud's production environment, so deploy the schema there in the CloudKit Console first.
 
 ## Privacy
 
