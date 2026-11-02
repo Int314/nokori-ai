@@ -28,8 +28,11 @@ Nokori AI is not affiliated with, endorsed by, or sponsored by Anthropic or Open
 1. Install with [Homebrew](https://brew.sh):
 
    ```bash
+   brew trust --cask int314/tap/nokori-ai
    brew install --cask int314/tap/nokori-ai
    ```
+
+   Homebrew loads casks from taps outside its own only once you trust them; the first line does that for this one cask.
 
    Or download the latest `Nokori AI` from [Releases](../../releases), move it to Applications and open it. It lives in the menu bar; there is no Dock icon.
 2. The first time it reads your Claude Code sign-in, macOS asks whether Nokori AI may use the "Claude Code-credentials" keychain item. See [the keychain prompt](#the-keychain-prompt).
