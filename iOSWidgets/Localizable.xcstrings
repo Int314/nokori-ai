@@ -1,0 +1,122 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Bars": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "バー"
+          }
+        }
+      }
+    },
+    "Claude Code": {
+      "shouldTranslate": false
+    },
+    "Claude Code and Codex usage, fetched by your Mac.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Macで取得したClaude CodeとCodexの使用量"
+          }
+        }
+      }
+    },
+    "Codex": {
+      "shouldTranslate": false
+    },
+    "One service's 5-hour and weekly usage as rings.": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1つのサービスの5時間枠と週間枠の使用率をリングで表示します"
+          }
+        }
+      }
+    },
+    "Open Nokori AI on your Mac": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MacでNokori AIを起動してください"
+          }
+        }
+      }
+    },
+    "Rings": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リング"
+          }
+        }
+      }
+    },
+    "Same as Mac": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Macと同じ"
+          }
+        }
+      }
+    },
+    "Service": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "サービス"
+          }
+        }
+      }
+    },
+    "Services": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示するサービス"
+          }
+        }
+      }
+    },
+    "Style": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "表示"
+          }
+        }
+      }
+    },
+    "Usage": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用量"
+          }
+        }
+      }
+    },
+    "Usage ring": {
+      "localizations": {
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "使用量リング"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

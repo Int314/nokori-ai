@@ -1,0 +1,151 @@
+name: NokoriAI
+options:
+  developmentLanguage: en
+settings:
+  base:
+    DEVELOPMENT_TEAM: 6ZQS95G2SN
+    SWIFT_VERSION: "6.0"
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: 1
+packages:
+  UsageCore:
+    path: Packages/UsageCore
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.10.0
+targets:
+  NokoriMac:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - Mac
+      - Shared/AppIcon.icon
+    info:
+      path: Mac/Info.plist
+      properties:
+        # Each release attaches appcast.xml, so "latest" always holds the newest one. Sparkle compares
+        # CURRENT_PROJECT_VERSION, which therefore goes up with every release.
+        SUFeedURL: https://github.com/Int314/nokori-ai/releases/latest/download/appcast.xml
+        SUPublicEDKey: 6ool7ftIBTg1RepQu4YgZVoKJfJtEptn7HWU9xw0EeI=
+        SUEnableAutomaticChecks: true
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+    settings:
+      base:
+        PRODUCT_NAME: Nokori AI
+        PRODUCT_BUNDLE_IDENTIFIER: dev.int314.nokori.mac
+        ENABLE_APP_SANDBOX: NO
+        ENABLE_HARDENED_RUNTIME: YES
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_LSUIElement: YES
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.developer-tools
+        INFOPLIST_KEY_NSHumanReadableCopyright: "2026 Nokori AI"
+        CODE_SIGN_ENTITLEMENTS: Mac/NokoriMac.entitlements
+        # iCloud には App ID・iCloud コンテナを割り当てたプロファイルが要る。Xcode にアカウントを入れずに済むよう手動署名にする
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: Apple Development
+        PROVISIONING_PROFILE_SPECIFIER: Nokori AI Mac Development
+    dependencies:
+      - package: UsageCore
+        product: UsageCore
+      - package: UsageCore
+        product: UsageUI
+      - package: Sparkle
+  NokoriiOS:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - iOS
+      - Shared/AppIcon.icon
+    info:
+      path: iOS/Info.plist
+      properties:
+        CFBundleDisplayName: Nokori AI
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSHumanReadableCopyright: "2026 Nokori AI"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
+        UIBackgroundModes: [remote-notification, fetch]
+        # Only HTTPS through Apple's frameworks, which is exempt; saying so skips the export compliance question on every upload.
+        ITSAppUsesNonExemptEncryption: false
+        BGTaskSchedulerPermittedIdentifiers: [dev.int314.nokori.refresh]
+    settings:
+      base:
+        PRODUCT_NAME: Nokori AI
+        PRODUCT_BUNDLE_IDENTIFIER: dev.int314.nokori
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_ENTITLEMENTS: iOS/NokoriiOS.entitlements
+        CODE_SIGN_STYLE: Automatic
+      # Release is only built for App Store Connect, with the local distribution certificate (Xcode has no account signed in)
+      configs:
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: Apple Distribution
+          PROVISIONING_PROFILE_SPECIFIER: Nokori AI App Store
+    dependencies:
+      - target: NokoriWidgets
+      - package: UsageCore
+        product: UsageCore
+      - package: UsageCore
+        product: UsageUI
+  NokoriWidgets:
+    type: app-extension
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources: [iOSWidgets]
+    info:
+      path: iOSWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Nokori AI
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.int314.nokori.widgets
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_ENTITLEMENTS: iOSWidgets/NokoriWidgets.entitlements
+        CODE_SIGN_STYLE: Automatic
+      configs:
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: Apple Distribution
+          PROVISIONING_PROFILE_SPECIFIER: Nokori AI Widgets App Store
+    dependencies:
+      - package: UsageCore
+        product: UsageCore
+      - package: UsageCore
+        product: UsageUI
+  MacTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - MacTests
+      - Mac/Fetchers
+      - Mac/UsageStore.swift
+      - Mac/ActivityWatcher.swift
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: dev.int314.nokori.mac.tests
+    dependencies:
+      - package: UsageCore
+        product: UsageCore
+schemes:
+  NokoriiOS:
+    build:
+      targets:
+        NokoriiOS: all
+  NokoriMac:
+    build:
+      targets:
+        NokoriMac: all
+    test:
+      targets: [MacTests]
