@@ -139,7 +139,7 @@ iPhoneアプリはポップアップと同じ内容を1画面で表示し（全�
 
 ## データ取得
 
-取得はMacアプリだけが行い、Claude CodeとCodexが既にMacに保存しているログイン情報を読み取り専用で使う。どちらも非公式の仕組みなので、取得部分は差し替えやすく作る。下の手順はCodexBarの `docs/claude.md`・`docs/codex.md`（2026-10-31時点）で確認したもの。実装前にCodexBarの実装を読み、変わっていないか確かめること。
+取得はMacアプリだけが行い、Claude CodeとCodexが既にMacに保存しているログイン情報を読み取り専用で使う。Claude Codeの使用量エンドポイントは非公開。Codexの `account/rateLimits/read` は [App Server](https://learn.chatgpt.com/docs/app-server) の公式ドキュメントに載っている（2026-11-03時点。実験的な機能の扱いではない）。どちらも変わり得るので、取得部分は差し替えやすく作る。下の手順はCodexBarの `docs/claude.md`・`docs/codex.md`（2026-10-31時点）で確認したもの。実装前にCodexBarの実装を読み、変わっていないか確かめること。
 
 ### Claude Code
 
@@ -268,12 +268,12 @@ Macだけで完結する部分（1〜5）を先に仕上げ、同期とiPhoneは
    - 完了条件：Developer ID署名のビルドで、CloudKit Dashboardでレコードが更新されるのを確認できる
 7. **iPhoneアプリとウィジェット**：アプリ、ホーム画面の小・中、ロック画面の円形・長方形
    - 完了条件：Macで使用量が変わると、iPhoneのアプリとウィジェットに反映される
-8. **公開準備**：README（スクリーンショット、インストール手順、非公式APIである旨、キーチェーンの許可ダイアログが出る理由、商標の注意書き、フォーク時のiCloudコンテナ変更手順）、MITライセンス、Macアプリの公証とGitHub Releases、iPhoneは各自でビルドする手順
+8. **公開準備**：README（スクリーンショット、インストール手順、Claude Codeの取得が非公式APIである旨、キーチェーンの許可ダイアログが出る理由、商標の注意書き、フォーク時のiCloudコンテナ変更手順）、MITライセンス、Macアプリの公証とGitHub Releases、iPhoneは各自でビルドする手順
    - 完了条件：新しいMacでREADMEの手順どおりに入れて動く
 
 ## 注意点
 
-- **非公式API**：使用量の取得はどちらも公開されたAPIではなく、予告なく変わり得る。取得部分は `Fetcher` プロトコルで差し替え可能にし、READMEにも明記する
+- **非公式API**：Claude Codeの使用量の取得は公開されたAPIではなく、予告なく変わり得る（Codexは公式の `app-server` の API を使う）。取得部分は `Fetcher` プロトコルで差し替え可能にし、READMEにも明記する
 - **セキュリティ**：認証情報は読み取り専用で、メモリ上でのみ扱う。同期データ・ログ・クラッシュレポートに含めない。キーチェーンの許可ダイアログが出る理由と、Claude Codeの更新後にもう一度出ることがある理由をREADMEで説明する
 - **商標**：AnthropicとOpenAIの公式ロゴは使わない（Anthropicは事前許可が必要、OpenAIは改変や色付けを禁止）。画面内でサービス名を文字で書くのは可。アプリ名・アイコンに「Claude」「Codex」やそれに似た図形を入れない。READMEに「AnthropicおよびOpenAIとは無関係」と記載する（参考：[Anthropic Trademark Guidelines](https://www.anthropic.com/legal/trademark-guidelines)、[OpenAI Brand Guidelines](https://openai.com/brand/)）
 - **ライセンス**：MIT。CodexBar（MIT）のコードを流用した場合は、該当ファイルとREADMEに著作権表示とライセンスを残す
