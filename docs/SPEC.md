@@ -54,7 +54,7 @@ Swift／SwiftUIのネイティブアプリ1本（Mac・iPhone・ウィジェッ�
 | ウィジェット | WidgetKit。アプリとはApp Groupの共有コンテナでデータを受け渡す |
 | iPhoneへの同期 | iCloud（CloudKitのプライベートDB）。下の「iPhoneへの同期」を参照 |
 | 識別子 | 接頭辞 `dev.int314.nokori` から作る：Mac `.mac`、iPhone は接頭辞そのもの、ウィジェット `.widgets`、iCloudコンテナ `iCloud.` ＋接頭辞、App Group `group.` ＋接頭辞。チームと接頭辞は `Config/Identity.xcconfig` にだけ書き、各自でビルドする人は `scripts/setup.sh` が作る `Config/Local.xcconfig` で上書きする |
-| 署名（開発中） | Macは手動署名（Apple Development＋プロファイル「Nokori AI Mac Development」。iCloudにはコンテナを割り当てたプロファイルが要り、Xcodeにアカウントを入れずに済ませるため）。iPhoneのシミュレータはプロファイルなしでiCloudの権限が入る |
+| 署名 | Debugは自動署名（`scripts/setup.sh` はXcodeに入れたアカウントのチームで署名する）。MacのReleaseはGitHub Releases用のArchiveにだけ使い、手動署名（Apple Development＋プロファイル「Nokori AI Mac Development」。iCloudにはコンテナを割り当てたプロファイルが要り、Xcodeにアカウントを入れずに済ませるため）にして、書き出しでDeveloper IDに署名し直す。iPhoneのシミュレータはプロファイルなしでiCloudの権限が入る |
 | Macアプリの配布 | サンドボックス外のDeveloper ID署名＋公証、GitHub Releases と自前の Homebrew tap（`Int314/homebrew-tap` の cask `nokori-ai`）。アプリの更新は Sparkle（フィードは最新リリースに添付した `appcast.xml`、EdDSA 署名。cask は `auto_updates true` で更新を Sparkle に任せる）。他アプリのキーチェーン読み取りと `codex` の起動にサンドボックス外が必要なため、Mac App Storeでは配布できない。CloudKitを使うため、Developer ID用のプロビジョニングプロファイルを埋め込む |
 | テスト | Swift Testing。取得処理はレスポンスのフィクスチャで単体テスト |
 
@@ -248,7 +248,7 @@ Mac（キーチェーン・codex CLI → 取得）
 - 古さの表示：iPhoneアプリは常に「◯分前のデータ」を表示する。45分を超えたらアプリもウィジェットも半透明にする（共通ルール参照）
 - 前提：Apple Developer Program（加入済み）のチームでiCloudコンテナとApp Groupを作成する
 - 複数のMac：レコードは手元より `fetchedAt` が新しいときだけ上書きする。古いデータで上書きしない
-- フォークして自分でビルドする人：iCloudコンテナのIDを自分のものに変える必要がある。手順はREADMEに書く
+- 自分のチームでビルドする人：`scripts/setup.sh` がチームと識別子の接頭辞を `Config/Local.xcconfig` に書き、そのチームでiCloudコンテナとApp Groupを登録する。リポジトリのファイルは書き換えない。手順はREADMEに書く
 
 ## 実装ステップ
 
@@ -268,7 +268,7 @@ Macだけで完結する部分（1〜5）を先に仕上げ、同期とiPhoneは
    - 完了条件：Developer ID署名のビルドで、CloudKit Dashboardでレコードが更新されるのを確認できる
 7. **iPhoneアプリとウィジェット**：アプリ、ホーム画面の小・中、ロック画面の円形・長方形
    - 完了条件：Macで使用量が変わると、iPhoneのアプリとウィジェットに反映される
-8. **公開準備**：README（スクリーンショット、インストール手順、Claude Codeの取得が非公式APIである旨、キーチェーンの許可ダイアログが出る理由、商標の注意書き、フォーク時のiCloudコンテナ変更手順）、MITライセンス、Macアプリの公証とGitHub Releases、iPhoneは各自でビルドする手順
+8. **公開準備**：README（スクリーンショット、インストール手順、Claude Codeの取得が非公式APIである旨、キーチェーンの許可ダイアログが出る理由、商標の注意書き）、MITライセンス、Macアプリの公証とGitHub Releases、iPhoneは各自でビルドする手順
    - 完了条件：新しいMacでREADMEの手順どおりに入れて動く
 
 ## 注意点
@@ -281,7 +281,7 @@ Macだけで完結する部分（1〜5）を先に仕上げ、同期とiPhoneは
 ## 決定事項
 
 - [x] **アプリ名**：Nokori AI。2026-10-31時点でGitHubに同名のリポジトリはなく、`nokoriai.com` は未登録、`nokori.ai` は取得済み。公開前にもう一度確認する
-- [x] **Apple Developer Program（年$99）**：加入済み。iCloud同期、TestFlight配布、Macアプリの公証に使う
+- [x] **Apple Developer Program（年$99）**：加入済み。iCloud同期、作者のTestFlight内部テスト、Macアプリの公証に使う
 - [x] **Claude Codeの取得方法**：OAuthの使用量エンドポイント（「データ取得」参照）。`claude /usage` の出力を読む代替はMVPでは入れない
 - [x] **モデル別の週間枠**：`limits[].weekly_scoped`（1モデル限定の枠。2026-11-01時点は Fable）だけを、ポップアップとiPhoneアプリに「Fable のみ」（Claude の設定画面と同じ表記）の行で出し（均等ペースは出さない）、「一番危ない枠だけ」の比較に入れる。ほかのメニューバー表示とウィジェットには出さない。モデル名は応答の `display_name` を使い決め打ちしない。期間限定で入れ替わるため、形の合わない項目は読み飛ばして取得全体は失敗させない（2026-11-01 決定）
 - [x] **ロック画面・円形ウィジェット**：サービスごとに1つ置く形
