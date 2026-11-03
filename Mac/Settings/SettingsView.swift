@@ -96,10 +96,12 @@ struct SettingsView: View {
             GridRow {
                 label("Updates")
                 VStack(alignment: .leading, spacing: 8) {
-                    Toggle("Check for updates automatically", isOn: $checksForUpdates).toggleStyle(.checkbox)
+                    if Updater.enabled { Toggle("Check for updates automatically", isOn: $checksForUpdates).toggleStyle(.checkbox) }
                     HStack(spacing: 10) {
-                        Button("Check Now") { NSApp.activate(ignoringOtherApps: true); Updater.controller.checkForUpdates(nil) }
-                            .disabled(!Updater.controller.updater.canCheckForUpdates)
+                        if Updater.enabled {
+                            Button("Check Now") { NSApp.activate(ignoringOtherApps: true); Updater.controller.checkForUpdates(nil) }
+                                .disabled(!Updater.controller.updater.canCheckForUpdates)
+                        }
                         Text("Version \(AppVersion.current)").font(.system(size: 12)).foregroundStyle(Theme(scheme).sub)
                     }
                 }

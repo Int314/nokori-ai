@@ -28,6 +28,10 @@
 	<false/>
 	<key>NSHumanReadableCopyright</key>
 	<string>2026 Nokori AI</string>
+	<key>NokoriAppGroup</key>
+	<string>group.$(NOKORI_ID)</string>
+	<key>NokoriCloudContainer</key>
+	<string>iCloud.$(NOKORI_ID)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

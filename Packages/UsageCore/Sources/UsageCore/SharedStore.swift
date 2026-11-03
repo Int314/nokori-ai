@@ -2,7 +2,7 @@ import Foundation
 
 /// What the iPhone app last pulled from CloudKit, shared with the widgets through the App Group.
 public struct SharedStore: Sendable {
-    public static let appGroup = "group.dev.int314.nokori"
+    public static let appGroup = Bundle.main.identifier("NokoriAppGroup")
     public struct Content: Sendable, Equatable {
         public let snapshots: [UsageSnapshot]
         /// Why the Mac's latest fetch of a service failed, if it did.
@@ -40,5 +40,14 @@ public struct SharedStore: Sendable {
               let syncedAt = defaults.object(forKey: "syncedAt") as? Date else { return nil }
         let issues = defaults.data(forKey: "issues").flatMap { try? JSONDecoder().decode([Provider: FetchStatus].self, from: $0) } ?? [:]
         return Content(snapshots: snapshots, issues: issues, services: defaults.string(forKey: "services").flatMap(DisplayServices.init(rawValue:)) ?? .both, syncedAt: syncedAt)
+    }
+}
+
+extension Bundle {
+    /// An identifier registered with Apple, which project.yml writes into Info.plist from Config/Identity.xcconfig, so that
+    /// whoever builds the apps changes it in one place.
+    func identifier(_ key: String) -> String {
+        guard let value = object(forInfoDictionaryKey: key) as? String, !value.isEmpty else { fatalError("\(key) is missing from Info.plist") }
+        return value
     }
 }

@@ -25,5 +25,9 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.widgetkit-extension</string>
 	</dict>
+	<key>NokoriAppGroup</key>
+	<string>group.$(NOKORI_ID)</string>
+	<key>NokoriCloudContainer</key>
+	<string>iCloud.$(NOKORI_ID)</string>
 </dict>
 </plist>

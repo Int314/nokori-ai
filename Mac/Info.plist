@@ -18,10 +18,12 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>NokoriCloudContainer</key>
+	<string>iCloud.$(NOKORI_ID)</string>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUFeedURL</key>
-	<string>https://github.com/Int314/nokori-ai/releases/latest/download/appcast.xml</string>
+	<string>$(NOKORI_UPDATE_FEED)</string>
 	<key>SUPublicEDKey</key>
 	<string>6ool7ftIBTg1RepQu4YgZVoKJfJtEptn7HWU9xw0EeI=</string>
 </dict>

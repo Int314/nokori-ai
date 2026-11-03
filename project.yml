@@ -1,9 +1,11 @@
 name: NokoriAI
 options:
   developmentLanguage: en
+configFiles:
+  Debug: Config/Identity.xcconfig
+  Release: Config/Identity.xcconfig
 settings:
   base:
-    DEVELOPMENT_TEAM: 6ZQS95G2SN
     SWIFT_VERSION: "6.0"
     LOCALIZATION_PREFERS_STRING_CATALOGS: YES
     SWIFT_EMIT_LOC_STRINGS: YES
@@ -28,15 +30,16 @@ targets:
       properties:
         # Each release attaches appcast.xml, so "latest" always holds the newest one. Sparkle compares
         # CURRENT_PROJECT_VERSION, which therefore goes up with every release.
-        SUFeedURL: https://github.com/Int314/nokori-ai/releases/latest/download/appcast.xml
+        SUFeedURL: $(NOKORI_UPDATE_FEED)
         SUPublicEDKey: 6ool7ftIBTg1RepQu4YgZVoKJfJtEptn7HWU9xw0EeI=
         SUEnableAutomaticChecks: true
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NokoriCloudContainer: iCloud.$(NOKORI_ID)
     settings:
       base:
         PRODUCT_NAME: Nokori AI
-        PRODUCT_BUNDLE_IDENTIFIER: dev.int314.nokori.mac
+        PRODUCT_BUNDLE_IDENTIFIER: $(NOKORI_ID).mac
         ENABLE_APP_SANDBOX: NO
         ENABLE_HARDENED_RUNTIME: YES
         GENERATE_INFOPLIST_FILE: YES
@@ -44,10 +47,17 @@ targets:
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.developer-tools
         INFOPLIST_KEY_NSHumanReadableCopyright: "2026 Nokori AI"
         CODE_SIGN_ENTITLEMENTS: Mac/NokoriMac.entitlements
-        # iCloud には App ID・iCloud コンテナを割り当てたプロファイルが要る。Xcode にアカウントを入れずに済むよう手動署名にする
-        CODE_SIGN_STYLE: Manual
-        CODE_SIGN_IDENTITY: Apple Development
-        PROVISIONING_PROFILE_SPECIFIER: Nokori AI Mac Development
+        CODE_SIGN_STYLE: Automatic
+        NOKORI_FEED_6ZQS95G2SN: https://github.com/Int314/nokori-ai/releases/latest/download/appcast.xml
+      # Release is only archived for GitHub Releases (scripts/release-mac.sh), with this project's profile; exporting re-signs it with Developer ID.
+      # Only a release signed by this project's team gets the update feed: Sparkle must never replace a Debug build
+      # or someone's own build with this project's release.
+      configs:
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: Apple Development
+          PROVISIONING_PROFILE_SPECIFIER: Nokori AI Mac Development
+          NOKORI_UPDATE_FEED: $(NOKORI_FEED_$(DEVELOPMENT_TEAM))
     dependencies:
       - package: UsageCore
         product: UsageCore
@@ -74,10 +84,12 @@ targets:
         # Only HTTPS through Apple's frameworks, which is exempt; saying so skips the export compliance question on every upload.
         ITSAppUsesNonExemptEncryption: false
         BGTaskSchedulerPermittedIdentifiers: [dev.int314.nokori.refresh]
+        NokoriCloudContainer: iCloud.$(NOKORI_ID)
+        NokoriAppGroup: group.$(NOKORI_ID)
     settings:
       base:
         PRODUCT_NAME: Nokori AI
-        PRODUCT_BUNDLE_IDENTIFIER: dev.int314.nokori
+        PRODUCT_BUNDLE_IDENTIFIER: $(NOKORI_ID)
         TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_ENTITLEMENTS: iOS/NokoriiOS.entitlements
         CODE_SIGN_STYLE: Automatic
@@ -106,9 +118,11 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        NokoriCloudContainer: iCloud.$(NOKORI_ID)
+        NokoriAppGroup: group.$(NOKORI_ID)
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: dev.int314.nokori.widgets
+        PRODUCT_BUNDLE_IDENTIFIER: $(NOKORI_ID).widgets
         TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_ENTITLEMENTS: iOSWidgets/NokoriWidgets.entitlements
         CODE_SIGN_STYLE: Automatic
@@ -134,7 +148,7 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: dev.int314.nokori.mac.tests
+        PRODUCT_BUNDLE_IDENTIFIER: $(NOKORI_ID).mac.tests
     dependencies:
       - package: UsageCore
         product: UsageCore

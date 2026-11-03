@@ -5,3 +5,4 @@ DerivedData/
 .build/
 # .xcodeproj は XcodeGen の生成物（xcodegen generate）
 *.xcodeproj/
+/Config/Local.xcconfig

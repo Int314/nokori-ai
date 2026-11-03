@@ -1,0 +1,8 @@
+// Who signs the apps, and the prefix of everything registered with Apple: the bundle IDs $(NOKORI_ID)[.mac|.widgets],
+// the iCloud container iCloud.$(NOKORI_ID) and the App Group group.$(NOKORI_ID). These are this project's own.
+// To build with your own team, scripts/setup.sh writes the same two settings to Local.xcconfig, which git ignores.
+// Nothing in project.yml may set DEVELOPMENT_TEAM: settings there win over this file and Local.xcconfig would stop working.
+DEVELOPMENT_TEAM = 6ZQS95G2SN
+NOKORI_ID = dev.int314.nokori
+
+#include? "Local.xcconfig"

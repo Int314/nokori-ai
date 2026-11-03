@@ -53,7 +53,7 @@ Swift／SwiftUIのネイティブアプリ1本（Mac・iPhone・ウィジェッ�
 | ログイン時起動 | `SMAppService.mainApp` |
 | ウィジェット | WidgetKit。アプリとはApp Groupの共有コンテナでデータを受け渡す |
 | iPhoneへの同期 | iCloud（CloudKitのプライベートDB）。下の「iPhoneへの同期」を参照 |
-| 識別子 | Mac `dev.int314.nokori.mac`、iPhone `dev.int314.nokori`、ウィジェット `dev.int314.nokori.widgets`、iCloudコンテナ `iCloud.dev.int314.nokori`、App Group `group.dev.int314.nokori` |
+| 識別子 | 接頭辞 `dev.int314.nokori` から作る：Mac `.mac`、iPhone は接頭辞そのもの、ウィジェット `.widgets`、iCloudコンテナ `iCloud.` ＋接頭辞、App Group `group.` ＋接頭辞。チームと接頭辞は `Config/Identity.xcconfig` にだけ書き、各自でビルドする人は `scripts/setup.sh` が作る `Config/Local.xcconfig` で上書きする |
 | 署名（開発中） | Macは手動署名（Apple Development＋プロファイル「Nokori AI Mac Development」。iCloudにはコンテナを割り当てたプロファイルが要り、Xcodeにアカウントを入れずに済ませるため）。iPhoneのシミュレータはプロファイルなしでiCloudの権限が入る |
 | Macアプリの配布 | サンドボックス外のDeveloper ID署名＋公証、GitHub Releases と自前の Homebrew tap（`Int314/homebrew-tap` の cask `nokori-ai`）。アプリの更新は Sparkle（フィードは最新リリースに添付した `appcast.xml`、EdDSA 署名。cask は `auto_updates true` で更新を Sparkle に任せる）。他アプリのキーチェーン読み取りと `codex` の起動にサンドボックス外が必要なため、Mac App Storeでは配布できない。CloudKitを使うため、Developer ID用のプロビジョニングプロファイルを埋め込む |
 | テスト | Swift Testing。取得処理はレスポンスのフィクスチャで単体テスト |
@@ -285,4 +285,4 @@ Macだけで完結する部分（1〜5）を先に仕上げ、同期とiPhoneは
 - [x] **Claude Codeの取得方法**：OAuthの使用量エンドポイント（「データ取得」参照）。`claude /usage` の出力を読む代替はMVPでは入れない
 - [x] **モデル別の週間枠**：`limits[].weekly_scoped`（1モデル限定の枠。2026-11-01時点は Fable）だけを、ポップアップとiPhoneアプリに「Fable のみ」（Claude の設定画面と同じ表記）の行で出し（均等ペースは出さない）、「一番危ない枠だけ」の比較に入れる。ほかのメニューバー表示とウィジェットには出さない。モデル名は応答の `display_name` を使い決め打ちしない。期間限定で入れ替わるため、形の合わない項目は読み飛ばして取得全体は失敗させない（2026-11-01 決定）
 - [x] **ロック画面・円形ウィジェット**：サービスごとに1つ置く形
-- [x] **iPhoneアプリの配布**：App Storeにも TestFlight の公開リンクにも出さず、使いたい開発者が各自でビルドする（2026-11-03 決定）。一度出した審査は取り下げた。iCloud のコンテナはチームごとなので、ビルドする人は Mac アプリも自分のチームでビルドする。作者は TestFlight の内部テストで使う（ビルドは 90 日で切れる）
+- [x] **iPhoneアプリの配布**：App Storeにも TestFlight の公開リンクにも出さず、使いたい開発者が各自でビルドする（2026-11-03 決定）。一度出した審査は取り下げた。iCloud のコンテナはチームごとなので、ビルドする人は Mac アプリも自分のチームでビルドする。作者は TestFlight の内部テストで使う（ビルドは 90 日で切れる）。ビルドする人はリポジトリのファイルを書き換えず、`scripts/setup.sh` だけで済ませる（更新は pull して再実行）。自動更新のフィードは作者のチームで署名した Release にだけ入る

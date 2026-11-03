@@ -56,26 +56,25 @@ Claude Code writes that item with Apple's `/usr/bin/security` tool, so Nokori AI
 
 ## iPhone app
 
-The iPhone app is not distributed; developers who want it build it themselves. iCloud sync and the App Group the widgets read from need a paid [Apple Developer Program](https://developer.apple.com/programs/) membership, and an iCloud container belongs to one developer team. So the Mac app from Homebrew or Releases cannot reach your iPhone: build both the Mac app and the iPhone app with your own team.
+The iPhone app is not distributed; developers who want it build it themselves. iCloud sync and the App Group the widgets read from need a paid [Apple Developer Program](https://developer.apple.com/programs/) membership, and an iCloud container belongs to one developer team. So the Mac app from Homebrew or Releases cannot reach your iPhone: build both apps with your own team. A script does the work, and a coding agent such as Claude Code or Codex can run it for you; ask it to set up the iPhone app as this section says.
 
-1. Install a current Xcode and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
-2. Replace this project's identifiers with yours:
-   - `DEVELOPMENT_TEAM` and the `PRODUCT_BUNDLE_IDENTIFIER`s in `project.yml`. For the Mac target, also set `CODE_SIGN_STYLE` to `Automatic` and remove `CODE_SIGN_IDENTITY` and `PROVISIONING_PROFILE_SPECIFIER`
-   - the iCloud container `iCloud.dev.int314.nokori` in the three `.entitlements` files and `Packages/UsageCore/Sources/UsageCore/CloudSync.swift`
-   - the App Group `group.dev.int314.nokori` in the iPhone and widget `.entitlements` files and `Packages/UsageCore/Sources/UsageCore/SharedStore.swift`
-3. Generate and open the project:
+First, by hand:
 
-   ```bash
-   xcodegen generate
-   open NokoriAI.xcodeproj
-   ```
+- Install a current Xcode and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`)
+- In Xcode, Settings > Accounts, sign in with the Apple Account of your paid membership
+- If you installed Nokori AI from Homebrew or Releases, quit it and remove it (`brew uninstall --cask nokori-ai`)
+- On the iPhone, turn on Developer Mode (Settings > Privacy & Security), connect it to the Mac with a cable and trust the Mac
 
-4. In Signing & Capabilities, let Xcode register the identifiers, the iCloud container and the App Group in your account.
-5. Quit the Homebrew or Releases copy of Nokori AI if it is running, then run `NokoriMac` on your Mac and `NokoriiOS` on your iPhone, signed in to the same Apple Account.
+Then:
 
-Builds run from Xcode never update themselves and use iCloud's development environment, which creates its record types on first use. Pull and run them again for new versions. The iPhone app keeps working until its development profile expires, a year at most.
+```bash
+scripts/setup.sh mac
+scripts/setup.sh iphone
+```
 
-Archiving your own release instead also needs your own update feed and key: `SUFeedURL` and `SUPublicEDKey` in `project.yml` (make the key with Sparkle's `generate_keys`) and `repo=` in `scripts/release-mac.sh`. Otherwise your build would offer this project's releases as updates. Release builds use iCloud's production environment, so deploy the schema there in the CloudKit Console first.
+The script writes your team and an identifier prefix to `Config/Local.xcconfig` (git ignores it; nothing in the repository changes), registers the bundle IDs, iCloud container and App Group with your team, builds the apps, puts the Mac app in Applications and installs the iPhone app. Run `scripts/setup.sh` without arguments to only generate `NokoriAI.xcodeproj`, then run `NokoriMac` and `NokoriiOS` from Xcode. If registering the iCloud container fails, open the project, select the target's Signing & Capabilities and check the container under iCloud once.
+
+In the Mac app, turn on **Sync to iPhone**, with the Mac and the iPhone signed in to the same Apple Account. These builds use iCloud's development environment, which creates its record types on first use, and never update themselves: pull and run the script again for a new version. They keep working until their development profiles expire, a year at most.
 
 ## Privacy
 

@@ -17,7 +17,7 @@ public enum SyncFailure: Equatable, Sendable {
 
 /// The Mac writes, the iPhone and its widgets read. Everything lives in the user's private database.
 public actor CloudSync {
-    public static let containerID = "iCloud.dev.int314.nokori"
+    public static let containerID = Bundle.main.identifier("NokoriCloudContainer")
     private static let subscriptionID = CKSubscription.ID("usage-changes")
     // Lazy: creating the container without the iCloud entitlement is what raises, so merely constructing a CloudSync is safe.
     private lazy var database = CKContainer(identifier: CloudSync.containerID).privateCloudDatabase
