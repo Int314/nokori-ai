@@ -101,11 +101,11 @@ func servicesRecordRoundTrip(_ services: DisplayServices) {
 @Test func macIssueWording() {
     let english = UsageFormatter(locale: Locale(identifier: "en")).macIssue(.expired, provider: .claude)
     #expect(english.title == "Claude Code: Login has expired")
-    #expect(english.detail == "On your Mac: Launch Claude Code once")
+    #expect(english.detail == "On your Mac: Run claude in Terminal to renew your login")
     #expect(UsageFormatter(locale: Locale(identifier: "en")).macIssue(.failed(.network), provider: .codex).detail == "On your Mac")
     let japanese = UsageFormatter(locale: Locale(identifier: "ja")).macIssue(.expired, provider: .claude)
     #expect(japanese.title == "Claude Code：ログインの期限が切れています")
-    #expect(japanese.detail == "Mac で：Claude Codeを一度起動してください")
+    #expect(japanese.detail == "Mac で：ターミナルで claude を起動してログインを更新してください")
 }
 
 @Test func englishWidgetFormatting() {

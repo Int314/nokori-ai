@@ -460,19 +460,19 @@
         }
       }
     },
-    "Log in to Claude Code in Terminal": {
+    "Run claude in Terminal and log in. Signing in to the Claude app alone does not connect Nokori AI.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Log in to Claude Code in Terminal"
+            "value": "Run claude in Terminal and log in. Signing in to the Claude app alone does not connect Nokori AI."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ターミナルでClaude Codeにログインしてください"
+            "value": "ターミナルで claude を起動してログインしてください。Claudeアプリへのログインだけでは連携できません。"
           }
         }
       }
@@ -511,19 +511,19 @@
         }
       }
     },
-    "Launch Claude Code once": {
+    "Run claude in Terminal to renew your login": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Launch Claude Code once"
+            "value": "Run claude in Terminal to renew your login"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Claude Codeを一度起動してください"
+            "value": "ターミナルで claude を起動してログインを更新してください"
           }
         }
       }

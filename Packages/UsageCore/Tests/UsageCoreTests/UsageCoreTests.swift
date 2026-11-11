@@ -325,3 +325,12 @@ func failureMessages(_ status: FetchStatus) {
         #expect(UsageFormatter(locale: Locale(identifier: "ja")).modelWindowName("Fable") == "Fable のみ")
     }
 }
+
+@Test func claudeLoginExplainsTerminalRequirement() {
+    let english = UsageFormatter(locale: Locale(identifier: "en"))
+    let japanese = UsageFormatter(locale: Locale(identifier: "ja"))
+    #expect(english.failure(.notLoggedIn, provider: .claude).detail == "Run claude in Terminal and log in. Signing in to the Claude app alone does not connect Nokori AI.")
+    #expect(japanese.failure(.notLoggedIn, provider: .claude).detail == "ターミナルで claude を起動してログインしてください。Claudeアプリへのログインだけでは連携できません。")
+    #expect(english.failure(.notLoggedIn, provider: .codex).detail == "Log in to Codex in Terminal")
+    #expect(japanese.failure(.notLoggedIn, provider: .codex).detail == "ターミナルでCodexにログインしてください")
+}
