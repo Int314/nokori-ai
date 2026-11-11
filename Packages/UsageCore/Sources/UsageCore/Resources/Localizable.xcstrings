@@ -460,19 +460,19 @@
         }
       }
     },
-    "Run claude in Terminal and log in. Signing in to the Claude app alone does not connect Nokori AI.": {
+    "Connect the Claude app in Settings, or run claude in Terminal and log in": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Run claude in Terminal and log in. Signing in to the Claude app alone does not connect Nokori AI."
+            "value": "Connect the Claude app in Settings, or run claude in Terminal and log in"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ターミナルで claude を起動してログインしてください。Claudeアプリへのログインだけでは連携できません。"
+            "value": "設定からClaudeアプリを連携するか、ターミナルで claude を起動してログインしてください"
           }
         }
       }
@@ -511,19 +511,19 @@
         }
       }
     },
-    "Run claude in Terminal to renew your login": {
+    "Reconnect Claude in Settings, or run claude in Terminal to renew your login": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Run claude in Terminal to renew your login"
+            "value": "Reconnect Claude in Settings, or run claude in Terminal to renew your login"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ターミナルで claude を起動してログインを更新してください"
+            "value": "設定からClaudeアプリを再連携するか、ターミナルで claude を起動してログインを更新してください"
           }
         }
       }
@@ -545,19 +545,19 @@
         }
       }
     },
-    "Allow Nokori AI to read Claude Code's sign-in": {
+    "Allow Nokori AI to read Claude's saved login": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Allow Nokori AI to read Claude Code's sign-in"
+            "value": "Allow Nokori AI to read Claude's saved login"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "Claude Codeのログイン情報を読むには許可が要ります"
+            "value": "Claudeのログイン情報を読むには許可が要ります"
           }
         }
       }
@@ -912,6 +912,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mac で：%@"
+          }
+        }
+      }
+    },
+    "Sign in to the Claude app, then press Retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in to the Claude app, then press Retry"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claudeアプリにログインしてから「再試行」を押してください"
+          }
+        }
+      }
+    },
+    "Allow Nokori AI to read the Claude app's saved login": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow Nokori AI to read the Claude app's saved login"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claudeアプリのログイン情報を読み取る許可が必要です"
+          }
+        }
+      }
+    },
+    "Open the Claude app and retry, or choose Claude Code in Settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open the Claude app and retry, or choose Claude Code in Settings"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claudeアプリを開いて再試行するか、設定でClaude Codeを選んでください"
+          }
+        }
+      }
+    },
+    "Allow Nokori AI to read Claude Code's sign-in": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow Nokori AI to read Claude Code's sign-in"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude Codeのログイン情報を読むには許可が要ります"
           }
         }
       }

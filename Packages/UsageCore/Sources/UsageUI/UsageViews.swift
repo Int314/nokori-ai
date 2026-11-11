@@ -67,10 +67,11 @@ public struct ServiceSection: View {
     public let now: Date
     public let layout: Layout
     public let retry: () -> Void
+    public let claudeApp: Bool
     @Environment(\.colorScheme) private var scheme
     @Environment(\.locale) private var locale
-    public init(snapshot: UsageSnapshot, now: Date, layout: Layout = .popover, retry: @escaping () -> Void = {}) {
-        self.snapshot = snapshot; self.now = now; self.layout = layout; self.retry = retry
+    public init(snapshot: UsageSnapshot, now: Date, layout: Layout = .popover, claudeApp: Bool = false, retry: @escaping () -> Void = {}) {
+        self.snapshot = snapshot; self.now = now; self.layout = layout; self.claudeApp = claudeApp; self.retry = retry
     }
     private var metrics: Metrics { layout == .phone ? .phone : .popover }
     private var theme: Theme { Theme(scheme) }
@@ -97,7 +98,7 @@ public struct ServiceSection: View {
                 }
             }.opacity(snapshot.isDisplayable(now: now) ? 1 : metrics.staleOpacity)
             if snapshot.status != .ok {
-                let failure = formatter.failure(snapshot.status, provider: snapshot.provider)
+                let failure = formatter.failure(snapshot.status, provider: snapshot.provider, claudeApp: claudeApp)
                 HStack(spacing: 10) {
                     Image(systemName: snapshot.status.needsKeychainAccess ? "lock" : "exclamationmark.circle").font(.system(size: 16)).foregroundStyle(theme.sub)
                     VStack(alignment: .leading, spacing: 2) {

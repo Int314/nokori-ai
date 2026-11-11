@@ -326,11 +326,11 @@ func failureMessages(_ status: FetchStatus) {
     }
 }
 
-@Test func claudeLoginExplainsTerminalRequirement() {
+@Test func claudeLoginExplainsConnectionChoices() {
     let english = UsageFormatter(locale: Locale(identifier: "en"))
     let japanese = UsageFormatter(locale: Locale(identifier: "ja"))
-    #expect(english.failure(.notLoggedIn, provider: .claude).detail == "Run claude in Terminal and log in. Signing in to the Claude app alone does not connect Nokori AI.")
-    #expect(japanese.failure(.notLoggedIn, provider: .claude).detail == "ターミナルで claude を起動してログインしてください。Claudeアプリへのログインだけでは連携できません。")
+    #expect(english.failure(.notLoggedIn, provider: .claude).detail == "Connect the Claude app in Settings, or run claude in Terminal and log in")
+    #expect(japanese.failure(.notLoggedIn, provider: .claude).detail == "設定からClaudeアプリを連携するか、ターミナルで claude を起動してログインしてください")
     #expect(english.failure(.notLoggedIn, provider: .codex).detail == "Log in to Codex in Terminal")
     #expect(japanese.failure(.notLoggedIn, provider: .codex).detail == "ターミナルでCodexにログインしてください")
 }

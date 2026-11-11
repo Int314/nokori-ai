@@ -4,6 +4,11 @@ import UsageCore
 
 actor ClaudeFetcher: Fetcher {
     private var credentials: ClaudeCredentials?
+    private let desktop: any Fetcher
+    private let useClaudeApp: @Sendable () -> Bool
+    init(desktop: any Fetcher = ClaudeDesktopFetcher(), useClaudeApp: @escaping @Sendable () -> Bool = { UserDefaults.standard.bool(forKey: "claudeApp") }) {
+        self.desktop = desktop; self.useClaudeApp = useClaudeApp
+    }
     // An ephemeral session prevents authenticated responses being written to a disk cache.
     private let session: URLSession = {
         let config = URLSessionConfiguration.ephemeral
@@ -13,6 +18,7 @@ actor ClaudeFetcher: Fetcher {
         return URLSession(configuration: config)
     }()
     func fetch(userInitiated: Bool, manualPath: String?) async -> FetchResult {
+        if useClaudeApp() { return await desktop.fetch(userInitiated: userInitiated, manualPath: nil) }
         if credentials?.isExpired(now: .now) == true { credentials = nil }
         if credentials == nil, let failure = await loadCredentials(userInitiated: userInitiated) { return failure }
         guard let loaded = credentials else { return .failure(.claude, .notLoggedIn) }
@@ -140,21 +146,8 @@ actor ClaudeFetcher: Fetcher {
         guard readKeychain(query, allowsUI: false, result: &result) == errSecSuccess else { return nil }
         return (result as? [String: Any])?[kSecAttrModificationDate as String] as? Date
     }
-    // Legacy file-based keychains can ignore kSecUseAuthenticationUIFail. Serialize the
-    // process-wide interaction flag and restore its previous value after every read.
-    private static let keychainLock = NSLock()
     nonisolated private static func readKeychain(_ query: [String: Any], allowsUI: Bool, result: inout CFTypeRef?) -> OSStatus {
-        keychainLock.lock()
-        defer { keychainLock.unlock() }
-        var wasAllowed: DarwinBoolean = true
-        let status = SecKeychainGetUserInteractionAllowed(&wasAllowed)
-        guard status == errSecSuccess else { return status }
-        if !allowsUI {
-            let status = SecKeychainSetUserInteractionAllowed(false)
-            guard status == errSecSuccess else { return status }
-        }
-        defer { if !allowsUI { SecKeychainSetUserInteractionAllowed(wasAllowed.boolValue) } }
-        return SecItemCopyMatching(query as CFDictionary, &result)
+        KeychainAccess.perform(allowsUI: allowsUI) { SecItemCopyMatching(query as CFDictionary, &result) } ?? errSecInteractionNotAllowed
     }
     nonisolated static func hasLogin() -> Bool {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,

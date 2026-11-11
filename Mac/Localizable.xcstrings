@@ -400,6 +400,91 @@
           }
         }
       }
+    },
+    "Claude connection": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude connection"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claudeの連携方法"
+          }
+        }
+      }
+    },
+    "Claude Code (Terminal)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude Code (Terminal)"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude Code（ターミナル）"
+          }
+        }
+      }
+    },
+    "Claude app": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude app"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claudeアプリ"
+          }
+        }
+      }
+    },
+    "Sign in to the Claude app, then connect. macOS may ask permission to read its saved login. No Terminal needed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in to the Claude app, then connect. macOS may ask permission to read its saved login. No Terminal needed."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claudeアプリにログインしてから連携してください。保存済みのログイン情報の読み取り許可を求められる場合があります。ターミナル操作は不要です。"
+          }
+        }
+      }
+    },
+    "Connect Claude app": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect Claude app"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claudeアプリと連携"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
