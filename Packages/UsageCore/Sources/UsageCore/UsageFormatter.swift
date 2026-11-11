@@ -119,8 +119,8 @@ public struct UsageFormatter: Sendable {
         switch status {
         case .ok: return ("", "")
         case .notLoggedIn:
-            return (text("Not logged in"), provider == .claude ? text("Log in to Claude Code in Terminal") : text("Log in to Codex in Terminal"))
-        case .expired: return (text("Login has expired"), text("Launch Claude Code once"))
+            return (text("Not logged in"), provider == .claude ? text("Run claude in Terminal and log in. Signing in to the Claude app alone does not connect Nokori AI.") : text("Log in to Codex in Terminal"))
+        case .expired: return (text("Login has expired"), text("Run claude in Terminal to renew your login"))
         case .needsKeychainPermission: return (text("Keychain access needed"), text("Allow Nokori AI to read Claude Code's sign-in"))
         case .keychainChanged: return (text("Keychain access needed"), text("Claude Code renewed its sign-in, so access was reset"))
         case .failed(.network): return (text("Connection error"), "")
