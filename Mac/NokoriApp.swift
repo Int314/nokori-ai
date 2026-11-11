@@ -8,6 +8,7 @@ import UsageCore
     @AppStorage("interval") private var interval = 5
     @AppStorage("manualCodex") private var manualCodex = false
     @AppStorage("codexPath") private var codexPath = ""
+    @AppStorage("claudeApp") private var claudeApp = false
     @AppStorage("syncIPhone") private var syncIPhone = true
     init() {
         #if DEBUG
@@ -62,7 +63,7 @@ import UsageCore
         // App の init の時点では NSApp がまだ nil なので、起動後に当てる
         DispatchQueue.main.async { AppSettings.appearance(defaults.string(forKey: "appearance") ?? "system") }
         store.configure(services: defaults.string(forKey: "services") ?? "both", minutes: defaults.object(forKey: "interval") as? Int ?? 5,
-                        manualPath: defaults.bool(forKey: "manualCodex") ? defaults.string(forKey: "codexPath") ?? "" : nil)
+                        manualPath: defaults.bool(forKey: "manualCodex") ? defaults.string(forKey: "codexPath") ?? "" : nil, claudeApp: defaults.bool(forKey: "claudeApp"))
         store.setCloud(ICloud.sync(enabled: defaults.bool(forKey: "syncIPhone")))
         store.watchActivity()
         _ = Updater.controller
@@ -76,11 +77,12 @@ import UsageCore
                 .onChange(of: interval) { configure() }
                 .onChange(of: manualCodex) { configure() }
                 .onChange(of: codexPath) { configure() }
+                .onChange(of: claudeApp) { configure() }
                 .onChange(of: syncIPhone) { store.setCloud(ICloud.sync(enabled: syncIPhone)) }
                 .onChange(of: appearance) { AppSettings.appearance(appearance) }
                 .onReceive(NSWorkspace.shared.notificationCenter.publisher(for: NSWorkspace.didWakeNotification)) { _ in store.refreshAll() }
         }.menuBarExtraStyle(.window)
-        Settings { SettingsView() }
+        Settings { SettingsView(store: store) }
     }
-    private func configure() { store.configure(services: services, minutes: interval, manualPath: manualCodex ? codexPath : nil) }
+    private func configure() { store.configure(services: services, minutes: interval, manualPath: manualCodex ? codexPath : nil, claudeApp: claudeApp) }
 }

@@ -21,7 +21,7 @@ Nokori AI is not affiliated with, endorsed by, or sponsored by Anthropic or Open
 ## Requirements
 
 - macOS 14 or later; for the iPhone app, iOS 17 or later and a paid Apple Developer Program membership
-- Claude Code signed in with a Claude Pro or Max plan, and/or the Codex CLI signed in with a ChatGPT plan. API-key sign-ins have no subscription limits to show
+- Claude app or Claude Code signed in with a Claude Pro or Max plan, and/or the Codex CLI signed in with a ChatGPT plan. API-key sign-ins have no subscription limits to show
 
 ## Install
 
@@ -35,22 +35,23 @@ Nokori AI is not affiliated with, endorsed by, or sponsored by Anthropic or Open
    Homebrew loads casks from taps outside its own only once you trust them; the first line does that for this one cask.
 
    Or download the latest `Nokori AI` from [Releases](../../releases), move it to Applications and open it. It lives in the menu bar; there is no Dock icon.
-2. The first time it reads your Claude Code sign-in, macOS asks whether Nokori AI may use the "Claude Code-credentials" keychain item. See [the keychain prompt](#the-keychain-prompt).
+2. To use the Claude app without Terminal, sign in to Claude.app and click **Connect Claude app** in Nokori AI (also available in Settings). macOS may ask permission to read **Claude Safe Storage**. You can instead use an existing Claude Code login. See [the keychain prompt](#the-keychain-prompt).
 
 The app checks for updates once a day and offers them; turn that off or check now under **Updates** in its settings. Anthropic does not promise the way Claude Code usage is read here, so updates are how fixes reach you.
 
 ## How it gets the numbers
 
-Anthropic publishes no API for Claude Code's subscription usage, so Nokori AI uses the endpoint Claude Code itself uses, and that part can break without notice when it changes. Codex documents the request Nokori AI makes.
+Anthropic publishes no API for Claude Code's subscription usage, so Nokori AI uses Claude's web or Claude Code OAuth endpoints, which can break without notice when they change. Codex documents the request Nokori AI makes.
 
+- **Claude app** (opt-in): reads only Claude.app's cookie database in place, decrypts its saved session using **Claude Safe Storage**, and requests `claude.ai` usage. No CLI installation or Terminal operation is needed. Each refresh rereads the app session; it never falls back to a different account in a browser or Claude Code. Multiple chat organizations need an active organization selected in Claude.app; otherwise the fetch fails instead of guessing.
 - **Claude Code**: reads the sign-in Claude Code stores in your keychain (or `~/.claude/.credentials.json`) and asks Anthropic's usage endpoint, identifying itself as Nokori AI
 - **Codex**: starts your installed `codex` in read-only mode (`codex -s read-only -a never app-server`) and asks it for the account's rate limits through the [app-server API](https://learn.chatgpt.com/docs/app-server)
 
-Nokori AI only reads. It never refreshes or writes either tool's credentials, keeps them in memory only, and sends them nowhere but the service they belong to. Claude Code's sign-in lasts about eight hours and only Claude Code renews it, so when it has expired Nokori AI starts `claude` for a few seconds in an empty folder of its own (no hooks, no MCP servers, nothing sent to the model) and lets it renew itself — useful on days you only use the Claude desktop app, which does not renew it. The iPhone receives the percentages and reset times through your private iCloud database — never credentials.
+Nokori AI only reads. It never refreshes or writes either tool's credentials, keeps them in memory only, and sends them nowhere but the service they belong to. Claude Code's sign-in lasts about eight hours and only Claude Code renews it, so when it has expired Nokori AI starts `claude` for a few seconds in an empty folder of its own (no hooks, no MCP servers, nothing sent to the model) and lets it renew itself (Claude Code connection only). The iPhone receives the percentages and reset times through your private iCloud database — never credentials.
 
 ## The keychain prompt
 
-Claude Code keeps its sign-in in the macOS keychain, and macOS asks before another app reads it. Nokori AI never shows that prompt on its own schedule; automatic refreshes only read what is already allowed. When access is missing, the popover shows **Allow**, and pressing it brings up the prompt.
+Claude.app keeps its cookie encryption key in **Claude Safe Storage**; Claude Code keeps its sign-in in **Claude Code-credentials**. macOS asks before another app reads these items. Nokori AI never shows that prompt on its own schedule; automatic refreshes only read what is already allowed. When access is missing, the popover shows **Allow**, and pressing it brings up the prompt.
 
 Claude Code writes that item with Apple's `/usr/bin/security` tool, so Nokori AI reads it through the same tool when the item's access list already trusts it. In that case no prompt appears even after Claude Code renews its sign-in. Otherwise you may be asked again after a renewal.
 

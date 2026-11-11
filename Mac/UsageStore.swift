@@ -17,6 +17,9 @@ import UsageCore
     private var autoPausedUntil: [Provider: Date] = [:]
     private var lastWeekly: [Provider: UsageWindow] = [:]
     private var pendingWeeklyReset: [Provider: Date] = [:]
+    private var claudeApp: Bool?
+    private var claudeGeneration = 0
+    private var claudeConnectionRequested = false
     private let claude: any Fetcher
     private let codex: any Fetcher
     var visible: [Provider] = Provider.allCases
@@ -25,7 +28,20 @@ import UsageCore
     var interval: TimeInterval = 300
     var manualPath: String?
     init(claude: any Fetcher = ClaudeFetcher(), codex: any Fetcher = CodexFetcher()) { self.claude = claude; self.codex = codex }
-    func configure(services: String, minutes: Int, manualPath: String?) {
+    func configure(services: String, minutes: Int, manualPath: String?, claudeApp: Bool = false) {
+        let sourceChanged = self.claudeApp != nil && self.claudeApp != claudeApp
+        self.claudeApp = claudeApp
+        if sourceChanged {
+            claudeGeneration += 1
+            claudeConnectionRequested = true
+            snapshots[.claude] = nil
+            lastWeekly[.claude] = nil
+            pendingWeeklyReset[.claude] = nil
+            lastGoodFetch[.claude] = nil
+            failures[.claude] = nil
+            nextFetch[.claude] = nil
+            blockedUntil[.claude] = nil
+        }
         let previous = visible
         let displayServices = DisplayServices(rawValue: services) ?? .both
         let servicesChanged = displayServices != self.services
@@ -75,11 +91,20 @@ import UsageCore
         }
     }
     func refresh(_ provider: Provider, userInitiated: Bool) async {
+        let userInitiated = userInitiated || (provider == .claude && claudeConnectionRequested)
         guard visible.contains(provider), !fetching.contains(provider), Date.now >= (blockedUntil[provider] ?? .distantPast) else { return }
         guard userInitiated || Date.now >= (autoPausedUntil[provider] ?? .distantPast) else { return }
+        let generation = claudeGeneration
+        if provider == .claude { claudeConnectionRequested = false }
         fetching.insert(provider)
-        defer { fetching.remove(provider) }
+        defer {
+            fetching.remove(provider)
+            if provider == .claude && generation != claudeGeneration {
+                Task { await refresh(.claude, userInitiated: false) }
+            }
+        }
         let result = await (provider == .claude ? claude : codex).fetch(userInitiated: userInitiated, manualPath: manualPath)
+        guard provider != .claude || generation == claudeGeneration else { return }
         let snapshot = result.snapshot
         if snapshot.status == .ok {
             failures[provider] = 0
@@ -92,6 +117,10 @@ import UsageCore
             nextFetch[provider] = Date.now.addingTimeInterval(delay)
         }
         autoPausedUntil[provider] = snapshot.status == .failed(.launchFailed) ? Date.now.addingTimeInterval(UsagePolicy.launchFailedPause) : nil
+        if result.resetsHistory {
+            lastWeekly[provider] = nil
+            pendingWeeklyReset[provider] = nil
+        }
         var windows = snapshot.status == .ok ? snapshot.windows : []
         if let index = windows.firstIndex(where: { $0.kind == .weekly && $0.model == nil }) {
             let guarded = WeeklyResetGuard.apply(previous: lastWeekly[provider], fetched: windows[index], pending: pendingWeeklyReset[provider], now: .now)

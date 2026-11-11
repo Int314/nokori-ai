@@ -31,6 +31,9 @@ import UsageUI
             await errorStore.refresh(.codex, userInitiated: false)
             try save(UsagePopover(store: errorStore), scheme: scheme, to: directory.appendingPathComponent("error-\(name).png"))
             try saveNative(SettingsView(), scheme: scheme, to: directory.appendingPathComponent("settings-\(name).png"))
+            try save(ServiceSection(snapshot: failure, now: now, claudeApp: true)
+                .padding(16).frame(width: 340).background(Theme(scheme).pop), scheme: scheme,
+                to: directory.appendingPathComponent("claude-app-\(name).png"))
             let presets = VStack(alignment: .leading, spacing: 16) {
                 ForEach(MenuPreset.allCases, id: \.rawValue) { preset in
                     HStack {

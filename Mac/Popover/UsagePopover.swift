@@ -4,9 +4,14 @@ import UsageUI
 
 struct UsagePopover: View {
     let store: UsageStore
+    @AppStorage("claudeApp") private var claudeApp = false
     @Environment(\.openSettings) private var openSettings
     @Environment(\.colorScheme) private var scheme
     @Environment(\.locale) private var locale
+    private var needsClaudeConnection: Bool {
+        let status = store.snapshot(.claude).status
+        return status == .notLoggedIn || status == .expired || status.needsKeychainAccess
+    }
     var body: some View {
         TimelineView(.everyMinute) { context in
             let theme = Theme(scheme)
@@ -24,8 +29,12 @@ struct UsagePopover: View {
                 }
                 ForEach(Array(store.visible.enumerated()), id: \.element) { index, provider in
                     if index > 0 { theme.divider.frame(height: 1) }
-                    ServiceSection(snapshot: store.snapshot(provider), now: context.date) {
+                    ServiceSection(snapshot: store.snapshot(provider), now: context.date, claudeApp: claudeApp) {
                         Task { await store.refresh(provider, userInitiated: true) }
+                    }
+                    if provider == .claude && !claudeApp && needsClaudeConnection {
+                        Button("Connect Claude app") { claudeApp = true }
+                            .buttonStyle(ChipButtonStyle()).disabled(store.fetching.contains(.claude))
                     }
                 }
                 HStack(spacing: 8) {

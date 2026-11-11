@@ -4,6 +4,8 @@ import UsageCore
 import UsageUI
 
 struct SettingsView: View {
+    var store: UsageStore? = nil
+    @AppStorage("claudeApp") private var claudeApp = false
     @AppStorage("services") private var services = "both"
     @AppStorage("appearance") private var appearance = "system"
     @AppStorage("preset") private var preset = "bars"
@@ -25,6 +27,22 @@ struct SettingsView: View {
             GridRow {
                 label("Services")
                 segments($services, options: [("both", String(localized: "Both")), ("claude", String(localized: "Claude Code only")), ("codex", String(localized: "Codex only"))])
+            }
+            GridRow {
+                label("Claude connection")
+                VStack(alignment: .leading, spacing: 8) {
+                    Picker("Claude connection", selection: $claudeApp) {
+                        Text("Claude Code (Terminal)").tag(false)
+                        Text("Claude app").tag(true)
+                    }.pickerStyle(.segmented).labelsHidden().frame(width: 320)
+                    Text("Sign in to the Claude app, then connect. macOS may ask permission to read its saved login. No Terminal needed.")
+                        .font(.system(size: 12)).foregroundStyle(Theme(scheme).sub)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button("Connect Claude app") {
+                        if claudeApp { Task { await store?.refresh(.claude, userInitiated: true) } }
+                        else { claudeApp = true }
+                    }
+                }.disabled(store?.fetching.contains(.claude) == true)
             }
             GridRow {
                 label("Appearance")
@@ -56,6 +74,7 @@ struct SettingsView: View {
                     }.labelsHidden().frame(width: 120)
                     Text("While Claude Code or Codex is at work. Otherwise every 30 minutes, since usage elsewhere still counts.")
                         .font(.system(size: 12)).foregroundStyle(Theme(scheme).sub)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
             GridRow {
@@ -109,6 +128,7 @@ struct SettingsView: View {
         }.font(.system(size: 13)).padding(.horizontal, 32).padding(.top, 24).padding(.bottom, 28)
             .frame(width: 760).background(Theme(scheme).pop).foregroundStyle(Theme(scheme).text)
             .task { iCloudAvailable = await ICloud.available() }
+            .onChange(of: claudeApp) { _, enabled in if enabled && services == "codex" { services = "both" } }
             .onChange(of: syncIPhone) { Task { iCloudAvailable = await ICloud.available() } }
             .onChange(of: checksForUpdates) { Updater.controller.updater.automaticallyChecksForUpdates = checksForUpdates }
             .onChange(of: launchAtLogin) { _, enabled in

@@ -4,6 +4,7 @@ import UsageCore
 struct FetchResult: Sendable {
     let snapshot: UsageSnapshot
     var retryAfter: TimeInterval?
+    var resetsHistory = false
     static func failure(_ provider: Provider, _ status: FetchStatus, retryAfter: TimeInterval? = nil) -> Self {
         Self(snapshot: UsageSnapshot(provider: provider, status: status, fetchedAt: .now), retryAfter: retryAfter)
     }

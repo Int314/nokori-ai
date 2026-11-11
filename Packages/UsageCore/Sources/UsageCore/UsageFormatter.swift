@@ -113,14 +113,29 @@ public struct UsageFormatter: Sendable {
     /// On the iPhone: the Mac's own message for a service it could not fetch, marked as something to do on the Mac.
     public func macIssue(_ status: FetchStatus, provider: Provider) -> (title: String, detail: String) {
         let message = failure(status, provider: provider)
-        return (text("\(provider.name): \(message.title)"), message.detail.isEmpty ? text("On your Mac") : text("On your Mac: \(message.detail)"))
+        // The existing iCloud issue schema has no connection source. Keep the phone's
+        // permission guidance valid for both Claude app and Claude Code connections.
+        let detail = provider == .claude && status == .needsKeychainPermission
+            ? text("Allow Nokori AI to read Claude's saved login") : message.detail
+        return (text("\(provider.name): \(message.title)"), detail.isEmpty ? text("On your Mac") : text("On your Mac: \(detail)"))
     }
-    public func failure(_ status: FetchStatus, provider: Provider) -> (title: String, detail: String) {
+    public func failure(_ status: FetchStatus, provider: Provider, claudeApp: Bool = false) -> (title: String, detail: String) {
+        if provider == .claude && claudeApp {
+            switch status {
+            case .notLoggedIn, .expired:
+                return (text("Not logged in"), text("Sign in to the Claude app, then press Retry"))
+            case .needsKeychainPermission, .keychainChanged:
+                return (text("Keychain access needed"), text("Allow Nokori AI to read the Claude app's saved login"))
+            case .failed(.unexpected):
+                return (text("Could not read the response"), text("Open the Claude app and retry, or choose Claude Code in Settings"))
+            default: break
+            }
+        }
         switch status {
         case .ok: return ("", "")
         case .notLoggedIn:
-            return (text("Not logged in"), provider == .claude ? text("Run claude in Terminal and log in. Signing in to the Claude app alone does not connect Nokori AI.") : text("Log in to Codex in Terminal"))
-        case .expired: return (text("Login has expired"), text("Run claude in Terminal to renew your login"))
+            return (text("Not logged in"), provider == .claude ? text("Connect the Claude app in Settings, or run claude in Terminal and log in") : text("Log in to Codex in Terminal"))
+        case .expired: return (text("Login has expired"), text("Reconnect Claude in Settings, or run claude in Terminal to renew your login"))
         case .needsKeychainPermission: return (text("Keychain access needed"), text("Allow Nokori AI to read Claude Code's sign-in"))
         case .keychainChanged: return (text("Keychain access needed"), text("Claude Code renewed its sign-in, so access was reset"))
         case .failed(.network): return (text("Connection error"), "")
